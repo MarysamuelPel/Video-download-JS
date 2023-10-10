@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Assignment</title>
+
+    <style>
+        /* Button styles */
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Video Player</h1>
+    <button class="button" id="downloadButton">Download Video</button>
+    <button class="button" id="playButton" style="display: none;">Play Video</button>
+    <div id="videoContainer"></div>
+
+    <script>
+        // Function to download the video using fetch and return a Blob
+        function downloadVideo() {
+            return fetch('https://static.videezy.com/system/resources/previews/000/008/443/original/Dark_Haired_Girl_confused_-what--_2.mp4')
+                .then(response => response.blob());
+        }
+
+        // Function to create video player with play and download buttons
+        function createVideoPlayer(blob) {
+            const videoContainer = document.getElementById('videoContainer');
+            const videoBlobUrl = URL.createObjectURL(blob);
+
+            // Create video element
+            const videoElement = document.createElement('video');
+            videoElement.src = videoBlobUrl;
+            videoElement.controls = true;
+            videoElement.autoplay = false;
+
+            // Create play button
+            const playButton = document.getElementById('playButton');
+            playButton.style.display = 'inline-block';
+            playButton.addEventListener('click', () => {
+                videoElement.play();
+            });
+
+            // Create download button
+            const downloadButton = document.getElementById('downloadButton');
+            downloadButton.style.display = 'none';
+            downloadButton.addEventListener('click', () => {
+                const a = document.createElement('a');
+                a.href = videoBlobUrl;
+                a.download = 'video.mp4';
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+
+            // Append video and buttons to the container
+            videoContainer.appendChild(videoElement);
+        }
+
+        // Handle the download and create video player when the download button is clicked
+        const downloadButton = document.getElementById('downloadButton');
+        downloadButton.addEventListener('click', () => {
+            downloadVideo()
+                .then(blob => {
+                    createVideoPlayer(blob);
+                })
+                .catch(error => {
+                    console.error('Error downloading video:', error);
+                });
+        });
+    </script>
+</body>
+</html>
